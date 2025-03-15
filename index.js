@@ -1,40 +1,42 @@
+require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
+const Plan = require("./models/plan")
 const app = express();
 
 let plan = [
     {
-      id: "domingo",
+      day: "Domingo",
       comida: "",
       encargado: ""
     },
     {
-      id: "lunes",
+      day: "Lunes",
       comida: "",
       encargado: ""
     },
     {
-      id: "martes",
+      day: "Martes",
       comida: "",
       encargado: ""
     },
     {
-      id: "miercoles",
+      day: "Miercoles",
       comida: "",
       encargado: ""
     },
     {
-      id: "jueves",
+      day: "Jueves",
       comid: "",
       encargado: ""
     },
     {
-      id: "viernes",
+      day: "Viernes",
       comida: "",
       encargado: ""
     },
     {
-      id: "sabado",
+      day: "Sabado",
       comida: "",
       encargado: ""
     }
@@ -48,22 +50,34 @@ app.get('/', (request, response) => {
 })
   
 app.get('/api/plan', (request, response) => {
-    response.json(plan)
+    Plan.find({})
+    .then(plan => {
+        response.json(plan)
+    })
+    .catch(error => {
+        console.log(error)
+        response.status(500).json({error: "Internal Server Error"})  
+    })
 })
 
 app.get('/api/plan/:id', (request, response) => {
-    const id = request.params.id
-    const comida = plan.find(comida => comida.id === id)
-    if (comida) {
-        response.json(comida)
-    } else {
-        response.status(404).end()
-    }
+    Plan.findById(request.params.id)
+      .then(plan => {
+        if (plan){
+          response.json(plan)
+        } else {
+          response.status(404).end({error: "Plan not found"})
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        response.status(500).json({error: "Internal Server Error"})
+      })
 })
 
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
