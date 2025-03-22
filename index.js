@@ -76,6 +76,9 @@ app.get('/api/plan/:id', (request, response) => {
 })
 
 
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+console.log('PORT:', process.env.PORT);
+
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
