@@ -52,6 +52,7 @@ app.get('/', (request, response) => {
 app.get('/api/plan', (request, response) => {
     Plan.find({})
     .then(plan => {
+      console.log("Fetched plans: ", plan)
         response.json(plan)
     })
     .catch(error => {
@@ -64,6 +65,7 @@ app.get('/api/plan/:id', (request, response) => {
     Plan.findById(request.params.id)
       .then(plan => {
         if (plan){
+          console.log("Fetched plans: ", plan)
           response.json(plan)
         } else {
           response.status(404).end({error: "Plan not found"})
