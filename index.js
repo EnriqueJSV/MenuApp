@@ -4,44 +4,7 @@ const cors = require('cors');
 const Plan = require("./models/plan")
 const app = express();
 
-let plan = [
-    {
-      day: "Domingo",
-      comida: "",
-      encargado: ""
-    },
-    {
-      day: "Lunes",
-      comida: "",
-      encargado: ""
-    },
-    {
-      day: "Martes",
-      comida: "",
-      encargado: ""
-    },
-    {
-      day: "Miercoles",
-      comida: "",
-      encargado: ""
-    },
-    {
-      day: "Jueves",
-      comid: "",
-      encargado: ""
-    },
-    {
-      day: "Viernes",
-      comida: "",
-      encargado: ""
-    },
-    {
-      day: "Sabado",
-      comida: "",
-      encargado: ""
-    }
-]
-
+app.use(express.json())
 app.use(cors())
 app.use(express.static("dist"))
 
@@ -49,10 +12,10 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
 })
   
+//Get all
 app.get('/api/plan', (request, response) => {
     Plan.find({})
     .then(plan => {
-      console.log("Fetched plans: ", plan)
         response.json(plan)
     })
     .catch(error => {
@@ -61,11 +24,11 @@ app.get('/api/plan', (request, response) => {
     })
 })
 
+//Get by id
 app.get('/api/plan/:id', (request, response) => {
     Plan.findById(request.params.id)
       .then(plan => {
         if (plan){
-          console.log("Fetched plans: ", plan)
           response.json(plan)
         } else {
           response.status(404).end({error: "Plan not found"})
@@ -77,10 +40,21 @@ app.get('/api/plan/:id', (request, response) => {
       })
 })
 
+//Update by id
+app.put('/api/plan/:id', (request, response, next) => {
+  const body = request.body
 
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
-console.log('PORT:', process.env.PORT);
+  const plan = {
+    comida: body.comida,
+    encargado: body.encargado
+  }  
 
+  Plan.findByIdAndUpdate(request.params.id, plan, {new: true})
+  .then(updatedPlan => {
+    response.json(updatedPlan)
+  })
+  .catch(error => next(error))
+})
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
